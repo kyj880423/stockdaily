@@ -75,7 +75,9 @@ public class StockDaily {
 		}
 		File out = new File(outFileName);
 		Files.deleteIfExists(out.toPath());
-		Files.write(out.toPath(), sb.toString().getBytes("utf-8"), 
+		String string = sb.toString();
+		System.out.println(string);
+		Files.write(out.toPath(), string.getBytes("utf-8"), 
 				StandardOpenOption.CREATE_NEW, 
 				StandardOpenOption.WRITE);
 		System.out.println("application end");
