@@ -55,8 +55,8 @@ public class StockDaily {
 			PreparedStatement statement = con.prepareStatement(sql);
 			statement.setString(1, startDate);
 			statement.setString(2, endDate);
-			statement.setString(3, startDate);
-			statement.setString(4, endDate);
+//			statement.setString(3, startDate);
+//			statement.setString(4, endDate);
 			try (ResultSet rs = statement.executeQuery()) {
 				int columnCount = rs.getMetaData().getColumnCount();
 

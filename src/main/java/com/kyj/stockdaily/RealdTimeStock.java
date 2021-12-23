@@ -9,6 +9,7 @@ package com.kyj.stockdaily;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,8 +25,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -66,7 +70,24 @@ public class RealdTimeStock {
 
 		for (Object item : items) {
 			System.out.println(item);
+			Map m = (Map) item;
+			String 종가 = (String) m.get("TDD_CLSPRC");
+			String 시작가 = (String) m.get("TDD_OPNPRC");
+			String 거래량 = (String) m.get("ACC_TRDVOL");
+			System.out.println(String.format("시작가 : %s, 종가 :  %s, 거래량 : %s", 시작가, 종가, 거래량));
 		}
+		
+//		File outXml = new File("out.xml");
+//		Files.writeString(outXml.toPath(), dataTime, null)
+//		StringWriter w = new StringWriter();
+//		try (FileWriter fileWriter = new FileWriter(outXml)) {
+//			new XmlMapper().writeValue(fileWriter, fromJson);	
+//		};
+		
+		
+//		GsonXmlBuilder builder = new GsonXmlBuilder();
+//		GsonXml create = builder.create();
+		
 		System.out.println("데이터 시간 : " + dataTime);
 	}
 
@@ -97,7 +118,11 @@ public class RealdTimeStock {
 		Calendar instance = Calendar.getInstance();
 		instance.setTime(fileDate);
 		instance.add(Calendar.MINUTE, 20);
-		return instance.after(new Date());
+		// TimeUnit.MINUTES.convert(instance.getTime().getTime());
+		long abs = Math.abs(instance.getTime().getTime() - new Date().getTime());
+		long convert = TimeUnit.MINUTES.convert(abs, TimeUnit.MILLISECONDS);
+		System.out.println("diff minute: " + convert);
+		return convert > 20;
 	}
 
 	/**
@@ -167,6 +192,7 @@ public class RealdTimeStock {
 	 * @throws IOException
 	 */
 	private static void writeTempFile(String json) throws IOException {
+		Files.deleteIfExists(tmp.toPath());
 		Files.writeString(tmp.toPath(), json, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
 	}
 
