@@ -137,20 +137,23 @@ public class RealdTimeStock {
 
 		// conn.connect();
 
-		System.out.println(conn.getResponseCode());
+		int responseCode = conn.getResponseCode();
+		System.out.println(responseCode);
 		System.out.println(conn.getResponseMessage());
+		if (responseCode == 200) {
+			try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 
-		try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-
-			try (InputStream inputStream = conn.getInputStream()) {
-				String r = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining());
-				Gson create = new GsonBuilder().setPrettyPrinting().create();
-				JsonElement parse = new JsonParser().parse(r);
-				String json = create.toJson(parse);
-				writeTempFile(json);
-				content = json;
+				try (InputStream inputStream = conn.getInputStream()) {
+					String r = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining());
+					Gson create = new GsonBuilder().setPrettyPrinting().create();
+					JsonElement parse = new JsonParser().parse(r);
+					String json = create.toJson(parse);
+					writeTempFile(json);
+					content = json;
+				}
 			}
-		}
+		} else
+			content = "";
 		return content;
 	}
 
